@@ -40,14 +40,15 @@ class Collection implements ArrayAccess, Enumerable
      */
     public static function times($number, callable $callback = null)
     {
+        //如果數量小於1，则直接返回空集合
         if ($number < 1) {
             return new static;
         }
-
+        //如果回调函数为空，则返回指定数量的集合
         if (is_null($callback)) {
             return new static(range(1, $number));
         }
-
+        //返回指定回调函数处理后的集合
         return (new static(range(1, $number)))->map($callback);
     }
 
