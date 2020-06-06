@@ -21,6 +21,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a new collection.
+     * 构造函数-创建一个集合实例
      *
      * @param  mixed  $items
      * @return void
@@ -32,7 +33,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a new collection by invoking the callback a given amount of times.
-     *
+     * 创建一个指定数量的集合，指定回调函数进行处理
      * @param  int  $number
      * @param  callable  $callback
      * @return static
