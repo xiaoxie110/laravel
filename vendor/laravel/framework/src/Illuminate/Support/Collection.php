@@ -21,7 +21,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a new collection.
-     * 创建一个集合实例
      *
      * @param  mixed  $items
      * @return void
@@ -33,31 +32,26 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a new collection by invoking the callback a given amount of times.
-     * 创建一个指定数量的集合；并经过 callback 进行回调处理。
      *
      * @param  int  $number
-     * @param  callable|null  $callback
+     * @param  callable  $callback
      * @return static
      */
     public static function times($number, callable $callback = null)
     {
-        // 如果数量小余1，则返回空集合
         if ($number < 1) {
             return new static;
         }
 
-        // 如果无回调，则返回指定数量的值的集合
         if (is_null($callback)) {
             return new static(range(1, $number));
         }
 
-        // 其他情况，返回回调后的集合
         return (new static(range(1, $number)))->map($callback);
     }
 
     /**
      * Get all of the items in the collection.
-     * 返回集合数据
      *
      * @return array
      */
@@ -68,7 +62,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get a lazy collection for the items in this collection.
-     * 创建一个惰性集合（支持迭代器，性能更优）
      *
      * @return \Illuminate\Support\LazyCollection
      */
@@ -79,14 +72,12 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the average value of a given key.
-     * 获取集合的平均值，支持回调函数
      *
      * @param  callable|string|null  $callback
      * @return mixed
      */
     public function avg($callback = null)
     {
-        // 看是直接取值还是回调取值
         $callback = $this->valueRetriever($callback);
 
         $items = $this->map(function ($value) use ($callback) {
@@ -98,20 +89,16 @@ class Collection implements ArrayAccess, Enumerable
         if ($count = $items->count()) {
             return $items->sum() / $count;
         }
-
-        // 可能啥都没返回？null？
     }
 
     /**
      * Get the median of a given key.
-     * 中位数计算
      *
      * @param  string|array|null  $key
      * @return mixed
      */
     public function median($key = null)
     {
-        // 将值进行去除指定key，去除null值，并进行排序
         $values = (isset($key) ? $this->pluck($key) : $this)
             ->filter(function ($item) {
                 return ! is_null($item);
@@ -119,21 +106,16 @@ class Collection implements ArrayAccess, Enumerable
 
         $count = $values->count();
 
-        // 如果集合数量为0，则直接返回null
         if ($count === 0) {
             return;
         }
 
-        // 【以下开始是技巧】
-        // 获取中间的数的下标，并向下取整（技巧）
         $middle = (int) ($count / 2);
 
-        // 如果中间的数是奇数，则直接取对应下标的值（技巧）
         if ($count % 2) {
             return $values->get($middle);
         }
 
-        // 如果中间的数是偶数，则取对应下标-1与对应下标值的平均值（技巧）
         return (new static([
             $values->get($middle - 1), $values->get($middle),
         ]))->average();
@@ -203,7 +185,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Cross join with the given lists, returning all possible permutations.
-     * 与多个集合互相组合，返回组合后的笛卡尔积集合
      *
      * @param  mixed  ...$lists
      * @return static
@@ -344,7 +325,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get all items except for those with the specified keys.
-     * 返回排除指定 key 的新集合
      *
      * @param  \Illuminate\Support\Collection|mixed  $keys
      * @return static
@@ -362,8 +342,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Run a filter over each of the items.
-     * 通过给定的回调函数过滤集合，保留通过了解的集合数据；
-     * 如果不设置回调函数，则集合中所有值符合 `false` 的将会被移除。
      *
      * @param  callable|null  $callback
      * @return static
@@ -379,7 +357,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the first item from the collection passing the given truth test.
-     * 从集合中返回符合条件的第一个值，支持回调函数；`$default` 为默认值。
      *
      * @param  callable|null  $callback
      * @param  mixed  $default
@@ -392,7 +369,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get a flattened array of the items in the collection.
-     * 将多维集合转换为一维集合，其中 `$depth` 为转换深度，默认无穷大。
      *
      * @param  int  $depth
      * @return static
@@ -404,7 +380,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Flip the items in the collection.
-     * 将集合的键和对应的值进行互换；转换后，遇到相同的键，后面的值会替换前面的
      *
      * @return static
      */
@@ -415,7 +390,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Remove an item from the collection by key.
-     * 删除指定 keys 的值，keys 可以是数组；并返回当前数组
      *
      * @param  string|array  $keys
      * @return $this
@@ -431,7 +405,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get an item from the collection by key.
-     * 返回集合中某个元素的值，如果不存在，可获取 $default 的值，$default 可以为回调函数
      *
      * @param  mixed  $key
      * @param  mixed  $default
@@ -443,7 +416,6 @@ class Collection implements ArrayAccess, Enumerable
             return $this->items[$key];
         }
 
-        // 获取值，如果是回调函数，则获取回调函数后的值
         return value($default);
     }
 
@@ -456,7 +428,7 @@ class Collection implements ArrayAccess, Enumerable
      */
     public function groupBy($groupBy, $preserveKeys = false)
     {
-        if (! $this->useAsCallable($groupBy) && is_array($groupBy)) {
+        if (is_array($groupBy)) {
             $nextGroups = $groupBy;
 
             $groupBy = array_shift($nextGroups);
@@ -520,7 +492,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Determine if an item exists in the collection by key.
-     * 判定键是否存在，支持多个传入，必须所有满足，才能返回 true
      *
      * @param  mixed  $key
      * @return bool
@@ -540,17 +511,15 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Concatenate values of a given key as a string.
-     * 将集合合并为字符串
      *
      * @param  string  $value
-     * @param  string|null  $glue
+     * @param  string  $glue
      * @return string
      */
     public function implode($value, $glue = null)
     {
         $first = $this->first();
 
-        // 如果是多维数组
         if (is_array($first) || is_object($first)) {
             return implode($glue, $this->pluck($value)->all());
         }
@@ -584,7 +553,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Determine if the collection is empty or not.
-     * 判定数据集合是否为空
      *
      * @return bool
      */
@@ -647,7 +615,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the values of a given key.
-     * 返回集合中指定元素的值，`$key` 的值设置为以下标
      *
      * @param  string|array  $value
      * @param  string|null  $key
@@ -660,7 +627,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Run a map over each of the items.
-     * 使用回调函数处理集合数据
      *
      * @param  callable  $callback
      * @return static
@@ -840,16 +806,14 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-     * Push one or more items onto the end of the collection.
+     * Push an item onto the end of the collection.
      *
-     * @param  mixed  $values [optional]
+     * @param  mixed  $value
      * @return $this
      */
-    public function push(...$values)
+    public function push($value)
     {
-        foreach ($values as $value) {
-            $this->items[] = $value;
-        }
+        $this->items[] = $value;
 
         return $this;
     }
@@ -939,7 +903,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Recursively replace the collection items with the given items.
-     * 递归地使用参数的集合/数组的值替换当前集合的值
      *
      * @param  mixed  $items
      * @return static
@@ -951,7 +914,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Reverse items order.
-     * 返回逆向排序集合
      *
      * @return static
      */
@@ -962,7 +924,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Search the collection for a given value and return the corresponding key if successful.
-     * 搜索集合中给定的值并返回下标；其中值支持回调函数；$strict 为是否精准匹配
      *
      * @param  mixed  $value
      * @param  bool  $strict
@@ -970,13 +931,11 @@ class Collection implements ArrayAccess, Enumerable
      */
     public function search($value, $strict = false)
     {
-        // 如果不是回调函数，则直接利用原生查找
         if (! $this->useAsCallable($value)) {
             return array_search($value, $this->items, $strict);
         }
 
         foreach ($this->items as $key => $item) {
-            // 回调函数回调
             if ($value($item, $key)) {
                 return $key;
             }
@@ -987,7 +946,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get and remove the first item from the collection.
-     * 从集合移除并返回第一个值
      *
      * @return mixed
      */
@@ -998,9 +956,8 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Shuffle the items in the collection.
-     * 将集合随机打乱，并返回新的集合
      *
-     * @param  int|null  $seed
+     * @param  int  $seed
      * @return static
      */
     public function shuffle($seed = null)
@@ -1010,7 +967,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Skip the first {$count} items.
-     * 跳过指定数量的集合，支持负数
      *
      * @param  int  $count
      * @return static
@@ -1021,32 +977,10 @@ class Collection implements ArrayAccess, Enumerable
     }
 
     /**
-     * Skip items in the collection until the given condition is met.
-     *
-     * @param  mixed  $value
-     * @return static
-     */
-    public function skipUntil($value)
-    {
-        return new static($this->lazy()->skipUntil($value)->all());
-    }
-
-    /**
-     * Skip items in the collection while the given condition is met.
-     *
-     * @param  mixed  $value
-     * @return static
-     */
-    public function skipWhile($value)
-    {
-        return new static($this->lazy()->skipWhile($value)->all());
-    }
-
-    /**
      * Slice the underlying collection array.
      *
      * @param  int  $offset
-     * @param  int|null  $length
+     * @param  int  $length
      * @return static
      */
     public function slice($offset, $length = null)
@@ -1093,7 +1027,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Chunk the collection into chunks of the given size.
-     * 针对集合数据进行分组
      *
      * @param  int  $size
      * @return static
@@ -1115,33 +1048,17 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Sort through each item with a callback.
-     * 基于回调函数进行排序，返回结果集
      *
      * @param  callable|null  $callback
      * @return static
      */
-    public function sort($callback = null)
+    public function sort(callable $callback = null)
     {
         $items = $this->items;
 
-        $callback && is_callable($callback)
+        $callback
             ? uasort($items, $callback)
-            : asort($items, $callback);
-
-        return new static($items);
-    }
-
-    /**
-     * Sort items in descending order.
-     *
-     * @param  int  $options
-     * @return static
-     */
-    public function sortDesc($options = SORT_REGULAR)
-    {
-        $items = $this->items;
-
-        arsort($items, $options);
+            : asort($items);
 
         return new static($items);
     }
@@ -1238,41 +1155,17 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Take the first or last {$limit} items.
-     * 从集合中获取指定数量的值，支持负数
      *
      * @param  int  $limit
      * @return static
      */
     public function take($limit)
     {
-        // 如果为负数时，从结尾开始获取
         if ($limit < 0) {
             return $this->slice($limit, abs($limit));
         }
 
         return $this->slice(0, $limit);
-    }
-
-    /**
-     * Take items in the collection until the given condition is met.
-     *
-     * @param  mixed  $key
-     * @return static
-     */
-    public function takeUntil($value)
-    {
-        return new static($this->lazy()->takeUntil($value)->all());
-    }
-
-    /**
-     * Take items in the collection while the given condition is met.
-     *
-     * @param  mixed  $key
-     * @return static
-     */
-    public function takeWhile($value)
-    {
-        return new static($this->lazy()->takeWhile($value)->all());
     }
 
     /**
@@ -1290,7 +1183,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Reset the keys on the underlying array.
-     * 重置集合数据的下标
      *
      * @return static
      */
@@ -1301,12 +1193,11 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Zip the collection together with one or more arrays.
-     * 将一个或多个数组组合压缩在一起
      *
      * e.g. new Collection([1, 2, 3])->zip([4, 5, 6]);
      *      => [[1, 4], [2, 5], [3, 6]]
      *
-     * @param  mixed  ...$items
+     * @param  mixed ...$items
      * @return static
      */
     public function zip($items)
@@ -1324,7 +1215,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Pad collection to the specified length with a value.
-     * 补足指定数量的指定值到集合数据中
      *
      * @param  int  $size
      * @param  mixed  $value
@@ -1337,7 +1227,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get an iterator for the items.
-     * 返回当前集合的数组迭代器
      *
      * @return \ArrayIterator
      */
@@ -1348,7 +1237,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Count the number of items in the collection.
-     * 返回集合的总数
      *
      * @return int
      */
@@ -1359,7 +1247,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Add an item to the collection.
-     * 追加一个数据到集合中，并返回当前集合
      *
      * @param  mixed  $item
      * @return $this
@@ -1373,7 +1260,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get a base Support collection instance from this collection.
-     * 基于当前集合，返回一个新的集合
      *
      * @return \Illuminate\Support\Collection
      */
@@ -1384,7 +1270,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Determine if an item exists at an offset.
-     * 判定集合的指定下标是否存在
      *
      * @param  mixed  $key
      * @return bool
@@ -1396,7 +1281,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get an item at a given offset.
-     * 获取集合中指定下标的数据
      *
      * @param  mixed  $key
      * @return mixed
@@ -1408,7 +1292,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Set the item at a given offset.
-     * 向集合设置指定下标的数据；若下标未定义(`null`)，则追加数据
      *
      * @param  mixed  $key
      * @param  mixed  $value
@@ -1425,7 +1308,6 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Unset the item at a given offset.
-     * 删除集合中指定下标的数据
      *
      * @param  string  $key
      * @return void
