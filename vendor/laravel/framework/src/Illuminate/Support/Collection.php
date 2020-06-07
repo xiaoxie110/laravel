@@ -459,7 +459,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Group an associative array by a field or using a callback.
-     *
+     * 指定键对集合项进行分组
      * @param  array|callable|string  $groupBy
      * @param  bool  $preserveKeys
      * @return static
@@ -505,6 +505,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Key an associative array by a field or using a callback.
+     * 以指定的键作为新集合的键
      *
      * @param  callable|string  $keyBy
      * @return static
@@ -530,6 +531,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Determine if an item exists in the collection by key.
+     * 判断集合中是否存在指定键
      *
      * @param  mixed  $key
      * @return bool
@@ -549,6 +551,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Concatenate values of a given key as a string.
+     * 用于合并集合项
      *
      * @param  string  $value
      * @param  string  $glue
@@ -557,16 +560,17 @@ class Collection implements ArrayAccess, Enumerable
     public function implode($value, $glue = null)
     {
         $first = $this->first();
-
+        // 如果集合第一元素是数组或者对象，则获取指定键对应的集合，然后合并
         if (is_array($first) || is_object($first)) {
             return implode($glue, $this->pluck($value)->all());
         }
-
+        // 否则直接合并集合中的元素
         return implode($value, $this->items);
     }
 
     /**
      * Intersect the collection with the given items.
+     * 从原集合中移除在指定 array 或集合中不存在的值。生成的集合将会保留原集合的键
      *
      * @param  mixed  $items
      * @return static
@@ -578,6 +582,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Intersect the collection with the given items by key.
+     * 方法从原集合中移除在指定 array 或集合中不存在的任何键
      *
      * @param  mixed  $items
      * @return static
@@ -591,6 +596,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Determine if the collection is empty or not.
+     * 判断集合是否为空
      *
      * @return bool
      */
@@ -601,6 +607,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Join all items from the collection using a string. The final items can use a separate glue string.
+     * 将集合中的值用字符串连接
      *
      * @param  string  $glue
      * @param  string  $finalGlue
@@ -623,7 +630,7 @@ class Collection implements ArrayAccess, Enumerable
         }
 
         $collection = new static($this->items);
-
+        // 最后一个元素
         $finalItem = $collection->pop();
 
         return $collection->implode($glue).$finalGlue.$finalItem;
@@ -631,6 +638,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the keys of the collection items.
+     * 返回集合中的键
      *
      * @return static
      */
@@ -641,6 +649,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the last item from the collection.
+     * 获取最后一个符合条件的值
      *
      * @param  callable|null  $callback
      * @param  mixed  $default
@@ -653,6 +662,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the values of a given key.
+     * 方法可以获取集合中指定键对应的所有值
      *
      * @param  string|array  $value
      * @param  string|null  $key
@@ -665,14 +675,17 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Run a map over each of the items.
+     * 遍历集合并将每一个值传入给定的回调函数, 生成被修改过集合项的新集合
      *
      * @param  callable  $callback
      * @return static
      */
     public function map(callable $callback)
     {
+        // 获取所有键
         $keys = array_keys($this->items);
 
+        //
         $items = array_map($callback, $this->items, $keys);
 
         return new static(array_combine($keys, $items));
