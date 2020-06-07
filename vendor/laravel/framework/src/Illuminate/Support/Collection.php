@@ -54,6 +54,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get all of the items in the collection.
+     * 返回集合数据
      *
      * @return array
      */
@@ -64,6 +65,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get a lazy collection for the items in this collection.
+     * 懒集合-利用了PHP的生成器在保持低内存使用率的同时使用非常大的数据集。
      *
      * @return \Illuminate\Support\LazyCollection
      */
@@ -74,20 +76,24 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the average value of a given key.
+     * 获取集合的平均数
      *
      * @param  callable|string|null  $callback
      * @return mixed
      */
     public function avg($callback = null)
     {
+        // 判断回调函数
         $callback = $this->valueRetriever($callback);
 
+        // 循环处理集合中的数据
         $items = $this->map(function ($value) use ($callback) {
             return $callback($value);
         })->filter(function ($value) {
             return ! is_null($value);
         });
 
+        // 返回平均值 如果为空 则返回null
         if ($count = $items->count()) {
             return $items->sum() / $count;
         }
@@ -95,12 +101,14 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the median of a given key.
+     * 集合中位数
      *
      * @param  string|array|null  $key
      * @return mixed
      */
     public function median($key = null)
     {
+        // 过滤null值，并排序
         $values = (isset($key) ? $this->pluck($key) : $this)
             ->filter(function ($item) {
                 return ! is_null($item);
@@ -108,16 +116,20 @@ class Collection implements ArrayAccess, Enumerable
 
         $count = $values->count();
 
+        // 如果集合数为0，则返回
         if ($count === 0) {
             return;
         }
 
+        // 取整中位数下标
         $middle = (int) ($count / 2);
 
+        // 中位数下标如果是奇数，则直接返回中位数
         if ($count % 2) {
             return $values->get($middle);
         }
 
+        // 中位数下标是偶数，返回中间两个数的平均值
         return (new static([
             $values->get($middle - 1), $values->get($middle),
         ]))->average();
@@ -125,28 +137,36 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the mode of a given key.
+     * 集合众数（出现最多次数的）数组
      *
      * @param  string|array|null  $key
      * @return array|null
      */
     public function mode($key = null)
     {
+        // 如果为空，直接返回
         if ($this->count() === 0) {
             return;
         }
 
+        // 获取指定集合
         $collection = isset($key) ? $this->pluck($key) : $this;
 
+        // 实例化一个新的临时计数集合
         $counts = new self;
 
-        $collection->each(function ($value) use ($counts) {
+        // 便利集合，计数集合实现计数, 已存在+1, 不存在为1
+      $collection->each(function ($value) use ($counts) {
             $counts[$value] = isset($counts[$value]) ? $counts[$value] + 1 : 1;
         });
 
+        // 升序
         $sorted = $counts->sort();
 
+        // 获取最后一个 出现频次最多的
         $highestValue = $sorted->last();
 
+        // 查出所以最频次的数据 TODO 这个sort的意义在哪里？前面已经排序过了的
         return $sorted->filter(function ($value) use ($highestValue) {
             return $value == $highestValue;
         })->sort()->keys()->all();
@@ -164,6 +184,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Determine if an item exists in the collection.
+     * 判断集合是否包含指定元素
      *
      * @param  mixed  $key
      * @param  mixed  $operator
@@ -172,21 +193,24 @@ class Collection implements ArrayAccess, Enumerable
      */
     public function contains($key, $operator = null, $value = null)
     {
+        // 如果只有一个参数
         if (func_num_args() === 1) {
+            // 如果是回調函數
             if ($this->useAsCallable($key)) {
                 $placeholder = new stdClass;
-
+                // 调用 first 方法检索数据，若最终返回的数据是 first 方法的默认值 $placeholder ，则说明不存在
                 return $this->first($key, $placeholder) !== $placeholder;
             }
-
+            // 否則直接查詢集合中是否存在
             return in_array($key, $this->items);
         }
-
+        // 参数不只一个，调用operatorForWhere函数解析参数，将参数包装成一个用来比较的闭包
         return $this->contains($this->operatorForWhere(...func_get_args()));
     }
 
     /**
      * Cross join with the given lists, returning all possible permutations.
+     * 方法交叉连接指定数组或集合的值，返回所有可能排列的笛卡尔积
      *
      * @param  mixed  ...$lists
      * @return static
@@ -200,6 +224,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the items in the collection that are not present in the given items.
+     * 将集合与其它集合或者PHP數組中的數值進行比較，返回不存在的值 只针对一维数组
      *
      * @param  mixed  $items
      * @return static
@@ -246,6 +271,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the items in the collection whose keys are not present in the given items.
+     * 键值对比，返回原集合中存在而指定集合中不存在键所对应的键 / 值对
      *
      * @param  mixed  $items
      * @return static
@@ -269,6 +295,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Retrieve duplicate items from the collection.
+     * 集合中重复的值
      *
      * @param  callable|null  $callback
      * @param  bool  $strict
@@ -276,15 +303,17 @@ class Collection implements ArrayAccess, Enumerable
      */
     public function duplicates($callback = null, $strict = false)
     {
+        // 符合条件的集合
         $items = $this->map($this->valueRetriever($callback));
-
+        // 集合中的唯一值集合
         $uniqueItems = $items->unique(null, $strict);
-
+        // 比较函数 ==  和 ===
         $compare = $this->duplicateComparator($strict);
 
         $duplicates = new static;
 
         foreach ($items as $key => $value) {
+            // 如果集合中的元素存在于唯一值集合中，则剔除，否则添加到返回集
             if ($uniqueItems->isNotEmpty() && $compare($value, $uniqueItems->first())) {
                 $uniqueItems->shift();
             } else {
@@ -327,6 +356,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get all items except for those with the specified keys.
+     * 返回排除指定 key 的新集合
      *
      * @param  \Illuminate\Support\Collection|mixed  $keys
      * @return static
@@ -344,21 +374,24 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Run a filter over each of the items.
+     * 過濾集合
      *
      * @param  callable|null  $callback
      * @return static
      */
     public function filter(callable $callback = null)
     {
+        // 如果有回調函數
         if ($callback) {
             return new static(Arr::where($this->items, $callback));
         }
-
+        // 如果沒有回調函數，直接過濾數組中的false值
         return new static(array_filter($this->items));
     }
 
     /**
      * Get the first item from the collection passing the given truth test.
+     * 方法返回集合中通过指定条件测试的第一个元素，如果回調函數為空，則返回第一個元素
      *
      * @param  callable|null  $callback
      * @param  mixed  $default
@@ -371,6 +404,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get a flattened array of the items in the collection.
+     * 将多维集合转换为一维集合，其中 $depth 为转换深度
      *
      * @param  int  $depth
      * @return static
@@ -382,6 +416,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Flip the items in the collection.
+     * 将集合的键和对应的值进行互换
      *
      * @return static
      */
@@ -392,6 +427,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Remove an item from the collection by key.
+     * 通过指定的键来移除集合中对应的内容
      *
      * @param  string|array  $keys
      * @return $this
@@ -407,7 +443,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get an item from the collection by key.
-     *
+     * 
      * @param  mixed  $key
      * @param  mixed  $default
      * @return mixed
@@ -1069,7 +1105,7 @@ class Collection implements ArrayAccess, Enumerable
      * Sort the collection using the given callback.
      *
      * @param  callable|string  $callback
-     * @param  int  $options
+     * @param  int  $option
      * @param  bool  $descending
      * @return static
      */
