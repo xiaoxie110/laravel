@@ -722,6 +722,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Run an associative map over each of the items.
+     * 遍历集合并将每个值传入给定的回调函数。将返回一个包含单个键 / 值对的关联数组：
      *
      * The callback should return an associative array with a single key/value pair.
      *
@@ -733,7 +734,7 @@ class Collection implements ArrayAccess, Enumerable
         $result = [];
 
         foreach ($this->items as $key => $value) {
-            $assoc = $callback($value, $key);
+            $assoc = $callback($value, $key);//回调函数处理
 
             foreach ($assoc as $mapKey => $mapValue) {
                 $result[$mapKey] = $mapValue;
@@ -745,6 +746,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Merge the collection with the given items.
+     * 合并集合
      *
      * @param  mixed  $items
      * @return static
@@ -756,6 +758,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Recursively merge the collection with the given items.
+     * 以递归的形式合并给定的数组或集合到原集合中
      *
      * @param  mixed  $items
      * @return static
@@ -767,6 +770,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a collection by using this collection for keys and another for its values.
+     * 方法将一个集合的值作为键，与另一个数组或集合的值进行结合
      *
      * @param  mixed  $values
      * @return static
@@ -778,6 +782,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Union the collection with the given items.
+     * 将给定数组添加到集合中
      *
      * @param  mixed  $items
      * @return static
@@ -789,6 +794,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a new collection consisting of every n-th element.
+     * 每隔几个元素创建一个新集合，可以指定偏移量
      *
      * @param  int  $step
      * @param  int  $offset
@@ -813,6 +819,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the items with the specified keys.
+     * 方法返回集合中所有指定键的集合项
      *
      * @param  mixed  $keys
      * @return static
@@ -834,6 +841,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get and remove the last item from the collection.
+     * 移除集合中的最后一个元素
      *
      * @return mixed
      */
