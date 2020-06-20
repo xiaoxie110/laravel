@@ -43,6 +43,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * The default number of seconds to store items.
+     * //默認緩存時間1小時
      *
      * @var int|null
      */
@@ -61,6 +62,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Determine if an item exists in the cache.
+     * 判斷緩存中是否存該緩存
      *
      * @param  string  $key
      * @return bool
@@ -72,6 +74,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Determine if an item doesn't exist in the cache.
+     * 和has相反
      *
      * @param  string  $key
      * @return bool
@@ -83,6 +86,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Retrieve an item from the cache by key.
+     * 獲取key對應的緩存值
      *
      * @param  string  $key
      * @param  mixed  $default
@@ -90,7 +94,7 @@ class Repository implements ArrayAccess, CacheContract
      */
     public function get($key, $default = null)
     {
-        if (is_array($key)) {
+        if (is_array($key)) {//支持數組查詢
             return $this->many($key);
         }
 
@@ -104,7 +108,7 @@ class Repository implements ArrayAccess, CacheContract
 
             $value = value($default);
         } else {
-            $this->event(new CacheHit($key, $value));
+            $this->event(new CacheHit($key, $value));//命中緩存
         }
 
         return $value;
@@ -112,7 +116,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Retrieve multiple items from the cache by key.
-     *
+     * 返回多個key對應的緩存
      * Items not found in the cache will have a null value.
      *
      * @param  array  $keys
@@ -130,6 +134,7 @@ class Repository implements ArrayAccess, CacheContract
     }
 
     /**
+     * 和many方法一支，可以傳入默認值
      * {@inheritdoc}
      */
     public function getMultiple($keys, $default = null)
@@ -172,6 +177,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Retrieve an item from the cache and delete it.
+     * 取回緩存key對應的值並移除
      *
      * @param  string  $key
      * @param  mixed  $default
@@ -180,12 +186,13 @@ class Repository implements ArrayAccess, CacheContract
     public function pull($key, $default = null)
     {
         return tap($this->get($key, $default), function () use ($key) {
-            $this->forget($key);
+            $this->forget($key);//移除
         });
     }
 
     /**
      * Store an item in the cache.
+     * 存儲緩存
      *
      * @param  string  $key
      * @param  mixed  $value
@@ -202,7 +209,7 @@ class Repository implements ArrayAccess, CacheContract
             return $this->forever($key, $value);
         }
 
-        $seconds = $this->getSeconds($ttl);
+        $seconds = $this->getSeconds($ttl);//獲取緩存秒，可以傳時間和秒
 
         if ($seconds <= 0) {
             return $this->forget($key);
@@ -284,6 +291,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Store an item in the cache if the key does not exist.
+     * 存儲緩存
      *
      * @param  string  $key
      * @param  mixed  $value
@@ -321,6 +329,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Increment the value of an item in the cache.
+     * 增加緩存的值，默認為1
      *
      * @param  string  $key
      * @param  mixed  $value
@@ -333,6 +342,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Decrement the value of an item in the cache.
+     * 減少緩存的值
      *
      * @param  string  $key
      * @param  mixed  $value
@@ -345,6 +355,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Store an item in the cache indefinitely.
+     * 永久緩存
      *
      * @param  string  $key
      * @param  mixed  $value
@@ -363,6 +374,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Get an item from the cache, or execute the given Closure and store the result.
+     * 獲取指定key的緩存值，如果不存在，則存儲并返回
      *
      * @param  string  $key
      * @param  \DateTimeInterface|\DateInterval|int|null  $ttl
@@ -399,6 +411,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Get an item from the cache, or execute the given Closure and store the result forever.
+     * 獲取指定key的緩存值，如果不存在，則永久存儲并返回
      *
      * @param  string  $key
      * @param  \Closure  $callback
@@ -422,6 +435,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Remove an item from the cache.
+     * 移除指定的緩存值
      *
      * @param  string  $key
      * @return bool
@@ -469,6 +483,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Begin executing a new tags operation if the store supports it.
+     *  標簽存儲
      *
      * @param  array|mixed  $names
      * @return \Illuminate\Cache\TaggedCache
