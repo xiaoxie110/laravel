@@ -355,7 +355,7 @@ class Repository implements ArrayAccess, CacheContract
 
     /**
      * Store an item in the cache indefinitely.
-     * 永久緩存
+     * 永久緩存某个key value
      *
      * @param  string  $key
      * @param  mixed  $value
