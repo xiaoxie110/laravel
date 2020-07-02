@@ -93,6 +93,8 @@ class Pipeline implements PipelineContract
      *
      * @param  \Closure  $destination
      * @return mixed
+     * 将回调函数 $this->carry() 迭代地作用到 管道中的每一个单元中
+     *
      */
     public function then(Closure $destination)
     {
@@ -118,6 +120,7 @@ class Pipeline implements PipelineContract
     /**
      * Get the final piece of the Closure onion.
      *
+     *
      * @param  \Closure  $destination
      * @return \Closure
      */
@@ -134,6 +137,7 @@ class Pipeline implements PipelineContract
 
     /**
      * Get a Closure that represents a slice of the application onion.
+     * 执行操作
      *
      * @return \Closure
      */

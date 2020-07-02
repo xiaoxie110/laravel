@@ -678,8 +678,8 @@ class Router implements BindingRegistrar, RegistrarContract
         $middleware = $shouldSkipMiddleware ? [] : $this->gatherRouteMiddleware($route);
 
         return (new Pipeline($this->container))
-                        ->send($request)
-                        ->through($middleware)
+                        ->send($request)//发送请求
+                        ->through($middleware)//实现过滤
                         ->then(function ($request) use ($route) {
                             return $this->prepareResponse(
                                 $request, $route->run()

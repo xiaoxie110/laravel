@@ -11,7 +11,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Facade;
 use InvalidArgumentException;
 use Throwable;
-
+// 实现Illuminate\Contracts\Http\Kernel接口
 class Kernel implements KernelContract
 {
     /**
@@ -97,6 +97,7 @@ class Kernel implements KernelContract
 
     /**
      * Handle an incoming HTTP request.
+     * 负责处理流入应用的请求对象并返回响应对象
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -122,6 +123,7 @@ class Kernel implements KernelContract
 
     /**
      * Send the given request through the middleware / router.
+     * 中間件過濾
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
