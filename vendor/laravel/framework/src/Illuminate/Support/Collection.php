@@ -722,6 +722,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Run an associative map over each of the items.
+     * 遍历集合并将每个值传入给定的回调函数。将返回一个包含单个键 / 值对的关联数组：
      *
      * The callback should return an associative array with a single key/value pair.
      *
@@ -733,7 +734,7 @@ class Collection implements ArrayAccess, Enumerable
         $result = [];
 
         foreach ($this->items as $key => $value) {
-            $assoc = $callback($value, $key);
+            $assoc = $callback($value, $key);//回调函数处理
 
             foreach ($assoc as $mapKey => $mapValue) {
                 $result[$mapKey] = $mapValue;
@@ -745,6 +746,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Merge the collection with the given items.
+     * 合并集合
      *
      * @param  mixed  $items
      * @return static
@@ -756,6 +758,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Recursively merge the collection with the given items.
+     * 以递归的形式合并给定的数组或集合到原集合中
      *
      * @param  mixed  $items
      * @return static
@@ -767,6 +770,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a collection by using this collection for keys and another for its values.
+     * 方法将一个集合的值作为键，与另一个数组或集合的值进行结合
      *
      * @param  mixed  $values
      * @return static
@@ -778,6 +782,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Union the collection with the given items.
+     * 将给定数组添加到集合中
      *
      * @param  mixed  $items
      * @return static
@@ -789,6 +794,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Create a new collection consisting of every n-th element.
+     * 每隔几个元素创建一个新集合，可以指定偏移量
      *
      * @param  int  $step
      * @param  int  $offset
@@ -813,6 +819,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get the items with the specified keys.
+     * 方法返回集合中所有指定键的集合项
      *
      * @param  mixed  $keys
      * @return static
@@ -834,6 +841,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get and remove the last item from the collection.
+     * 移除集合中的最后一个元素
      *
      * @return mixed
      */
@@ -844,6 +852,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Push an item onto the beginning of the collection.
+     * 将指定的值添加到集合的开头
      *
      * @param  mixed  $value
      * @param  mixed  $key
@@ -858,6 +867,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Push an item onto the end of the collection.
+     * 添加指定值到集合末尾
      *
      * @param  mixed  $value
      * @return $this
@@ -871,6 +881,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Push all of the given items onto the collection.
+     * 在集合的末端附加指定的数组或者集合
      *
      * @param  iterable  $source
      * @return static
@@ -878,7 +889,7 @@ class Collection implements ArrayAccess, Enumerable
     public function concat($source)
     {
         $result = new static($this);
-
+        //循环push到集合末尾
         foreach ($source as $item) {
             $result->push($item);
         }
@@ -888,6 +899,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get and remove an item from the collection.
+     * 指定键对应的值从集合中移除并返回
      *
      * @param  mixed  $key
      * @param  mixed  $default
@@ -900,6 +912,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Put an item in the collection by key.
+     * 在集合内设置给定的键值对
      *
      * @param  mixed  $key
      * @param  mixed  $value
@@ -914,6 +927,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get one or a specified number of items randomly from the collection.
+     * 从集合中返回一个随机项
      *
      * @param  int|null  $number
      * @return static|mixed
@@ -931,6 +945,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Reduce the collection to a single value.
+     * 将每次迭代的结果传递给下一次迭代，直到遍历完集合
      *
      * @param  callable  $callback
      * @param  mixed  $initial
@@ -943,6 +958,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Replace the collection items with the given items.
+     * 替换原有集合指定项，数字键集合也有效
      *
      * @param  mixed  $items
      * @return static
@@ -954,6 +970,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Recursively replace the collection items with the given items.
+     * 类似 replace ，但是会以递归的形式将数组替换到具有相同键的集合项中
      *
      * @param  mixed  $items
      * @return static
@@ -965,6 +982,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Reverse items order.
+     * 倒转集合项的顺序，并保留原始的键
      *
      * @return static
      */
@@ -975,6 +993,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Search the collection for a given value and return the corresponding key if successful.
+     * 集合的搜寻方法，搜索给定的值
      *
      * @param  mixed  $value
      * @param  bool  $strict
@@ -982,7 +1001,7 @@ class Collection implements ArrayAccess, Enumerable
      */
     public function search($value, $strict = false)
     {
-        if (! $this->useAsCallable($value)) {
+        if (! $this->useAsCallable($value)) { // 如果不是回调函数
             return array_search($value, $this->items, $strict);
         }
 
@@ -997,6 +1016,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get and remove the first item from the collection.
+     * 从集合中移除并返回一个值
      *
      * @return mixed
      */
@@ -1007,6 +1027,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Shuffle the items in the collection.
+     * 打乱集合
      *
      * @param  int  $seed
      * @return static
@@ -1018,6 +1039,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Skip the first {$count} items.
+     * 返回指定跳过的数量集合
      *
      * @param  int  $count
      * @return static
@@ -1029,6 +1051,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Slice the underlying collection array.
+     * 返回集合中给定索引开始后面的部分
      *
      * @param  int  $offset
      * @param  int  $length
@@ -1041,6 +1064,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Split a collection into a certain number of groups.
+     * 集合按照给定的值拆分
      *
      * @param  int  $numberOfGroups
      * @return static
@@ -1078,6 +1102,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Chunk the collection into chunks of the given size.
+     * 集合分割成多个指定大小的较小集合
      *
      * @param  int  $size
      * @return static
@@ -1099,6 +1124,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Sort through each item with a callback.
+     * 排序
      *
      * @param  callable|null  $callback
      * @return static
@@ -1116,6 +1142,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Sort the collection using the given callback.
+     * 指定排序
      *
      * @param  callable|string  $callback
      * @param  int  $option
@@ -1162,6 +1189,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Sort the collection keys.
+     * 通过底层关联数组的键来对集合进行排序
      *
      * @param  int  $options
      * @param  bool  $descending
@@ -1189,6 +1217,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Splice a portion of the underlying collection array.
+     * 移除并返回指定索引开始的集合项片段
      *
      * @param  int  $offset
      * @param  int|null  $length
@@ -1206,6 +1235,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Take the first or last {$limit} items.
+     * 返回指定数量的集合
      *
      * @param  int  $limit
      * @return static
@@ -1221,6 +1251,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Transform each item in the collection using a callback.
+     * 和map原理一直，但是会改变原集合
      *
      * @param  callable  $callback
      * @return $this
@@ -1234,6 +1265,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Reset the keys on the underlying array.
+     * 返回键被重置为连续编号的新集合
      *
      * @return static
      */
@@ -1278,6 +1310,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get an iterator for the items.
+     * 返回集合迭代器
      *
      * @return \ArrayIterator
      */
@@ -1288,6 +1321,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Count the number of items in the collection.
+     * 返回集合数量
      *
      * @return int
      */
@@ -1298,6 +1332,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Add an item to the collection.
+     * 新增集合元素
      *
      * @param  mixed  $item
      * @return $this
@@ -1311,6 +1346,7 @@ class Collection implements ArrayAccess, Enumerable
 
     /**
      * Get a base Support collection instance from this collection.
+     * 返回一个新的集合
      *
      * @return \Illuminate\Support\Collection
      */

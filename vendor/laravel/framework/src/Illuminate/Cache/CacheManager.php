@@ -84,6 +84,10 @@ class CacheManager implements FactoryContract
 
     /**
      * Resolve the given store.
+     * 解析存储
+     * 自定义驱动: 查看是否有通过 CacheManager::extend(...)自定义的驱动
+     * Laravel提供的驱动: 查看是否存在 CacheManager::createXxxDriver(...)方法
+     * 这些方法都是实现了 Illuminate\Contracts\Cache\Repository 接口
      *
      * @param  string  $name
      * @return \Illuminate\Contracts\Cache\Repository
@@ -124,6 +128,7 @@ class CacheManager implements FactoryContract
 
     /**
      * Create an instance of the APC cache driver.
+     * Apc
      *
      * @param  array  $config
      * @return \Illuminate\Cache\Repository
@@ -373,6 +378,7 @@ class CacheManager implements FactoryContract
 
     /**
      * Dynamically call the default driver instance.
+     * 以便快速调用默认缓存驱动
      *
      * @param  string  $method
      * @param  array  $parameters

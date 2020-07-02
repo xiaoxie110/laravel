@@ -11,6 +11,7 @@ abstract class Facade
 {
     /**
      * The application instance being facaded.
+     * Application 对象的实例
      *
      * @var \Illuminate\Contracts\Foundation\Application
      */
@@ -18,6 +19,7 @@ abstract class Facade
 
     /**
      * The resolved object instances.
+     * 解析出来的门面对应的服务类实例
      *
      * @var array
      */
@@ -25,6 +27,7 @@ abstract class Facade
 
     /**
      * Run a Closure when the facade has been resolved.
+     *
      *
      * @param  \Closure  $callback
      * @return void
@@ -143,6 +146,7 @@ abstract class Facade
 
     /**
      * Hotswap the underlying instance behind the facade.
+     * 更换当前门面对应的对象实例
      *
      * @param  mixed  $instance
      * @return void
@@ -158,6 +162,7 @@ abstract class Facade
 
     /**
      * Get the root object behind the facade.
+     * 返回当前门面对应服务对象的实例
      *
      * @return mixed
      */
@@ -168,6 +173,7 @@ abstract class Facade
 
     /**
      * Get the registered name of the component.
+     * 返回此门面具体对应的服务类名
      *
      * @return string
      *
@@ -180,6 +186,7 @@ abstract class Facade
 
     /**
      * Resolve the facade root instance from the container.
+     * 獲取或创建并返回 $name 对应的对象实例
      *
      * @param  object|string  $name
      * @return mixed
@@ -194,6 +201,9 @@ abstract class Facade
             return static::$resolvedInstance[$name];
         }
 
+        //具体的创建操作由 Application 类对象的来进行，
+        //所以 $name 需要在 Application 对象中进行过绑定，
+        //或者 $name 是带有完整命名空间的类名
         if (static::$app) {
             return static::$resolvedInstance[$name] = static::$app[$name];
         }
@@ -201,6 +211,7 @@ abstract class Facade
 
     /**
      * Clear a resolved facade instance.
+     * 清除 $name 对应的服务对象实例
      *
      * @param  string  $name
      * @return void
@@ -252,12 +263,12 @@ abstract class Facade
      */
     public static function __callStatic($method, $args)
     {
-        $instance = static::getFacadeRoot();
+        $instance = static::getFacadeRoot(); //解析出实例
 
         if (! $instance) {
             throw new RuntimeException('A facade root has not been set.');
         }
 
-        return $instance->$method(...$args);
+        return $instance->$method(...$args); //調出实例對應方法
     }
 }

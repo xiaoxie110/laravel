@@ -45,6 +45,7 @@ class AliasLoader
 
     /**
      * Get or create the singleton alias loader instance.
+     * 返回或创建针对 $aliases 的 AliasLoader 类
      *
      * @param  array  $aliases
      * @return \Illuminate\Foundation\AliasLoader
@@ -76,7 +77,7 @@ class AliasLoader
             return true;
         }
 
-        if (isset($this->aliases[$alias])) {
+        if (isset($this->aliases[$alias])) {//实例化一个对象
             return class_alias($this->aliases[$alias], $alias);
         }
     }
@@ -94,6 +95,7 @@ class AliasLoader
 
     /**
      * Ensure that the given alias has an existing real-time facade class.
+     * 确保给定的alias是否存在于门面配置中
      *
      * @param  string  $alias
      * @return string
@@ -145,6 +147,7 @@ class AliasLoader
 
     /**
      * Register the loader on the auto-loader stack.
+     * 注册当前的加载器到程序的自动加载栈
      *
      * @return void
      */
@@ -159,6 +162,7 @@ class AliasLoader
 
     /**
      * Prepend the load method to the auto-loader stack.
+     * 注册当前对象的 load 方法到程序的自动加载栈
      *
      * @return void
      */
