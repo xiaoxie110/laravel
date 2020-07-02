@@ -685,7 +685,7 @@ class Collection implements ArrayAccess, Enumerable
         // 获取所有键
         $keys = array_keys($this->items);
 
-        //
+        // 遍历集合去循环资讯回调函数
         $items = array_map($callback, $this->items, $keys);
 
         return new static(array_combine($keys, $items));
