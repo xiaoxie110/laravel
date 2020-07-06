@@ -99,7 +99,9 @@ class Pipeline implements PipelineContract
     public function then(Closure $destination)
     {
         $pipeline = array_reduce(
-            array_reverse($this->pipes()), $this->carry(), $this->prepareDestination($destination)
+            array_reverse($this->pipes()),//当前管道
+            $this->carry(),//回调函数
+            $this->prepareDestination($destination)
         );
 
         return $pipeline($this->passable);
@@ -119,7 +121,7 @@ class Pipeline implements PipelineContract
 
     /**
      * Get the final piece of the Closure onion.
-     *
+     * 获取最后一个结果
      *
      * @param  \Closure  $destination
      * @return \Closure
@@ -198,6 +200,7 @@ class Pipeline implements PipelineContract
 
     /**
      * Get the array of configured pipes.
+     * 獲取當前管道
      *
      * @return array
      */

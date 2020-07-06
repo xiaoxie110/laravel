@@ -406,8 +406,10 @@ class Container implements ArrayAccess, ContainerContract
      */
     public function instance($abstract, $instance)
     {
+        //移除已经存在的抽象的别名
         $this->removeAbstractAlias($abstract);
 
+        // 检查是否已经存在该别名的绑定的对象
         $isBound = $this->bound($abstract);
 
         unset($this->aliases[$abstract]);
@@ -417,6 +419,7 @@ class Container implements ArrayAccess, ContainerContract
         // can be updated with consuming classes that have gotten resolved here.
         $this->instances[$abstract] = $instance;
 
+        // 判断是否已经绑定
         if ($isBound) {
             $this->rebound($abstract);
         }
