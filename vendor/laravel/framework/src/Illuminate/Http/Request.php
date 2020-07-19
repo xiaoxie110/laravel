@@ -616,6 +616,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Set the route resolver callback.
+     * 设置路由解析回调
      *
      * @param  \Closure  $callback
      * @return $this

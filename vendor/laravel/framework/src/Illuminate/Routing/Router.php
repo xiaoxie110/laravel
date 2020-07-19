@@ -606,6 +606,7 @@ class Router implements BindingRegistrar, RegistrarContract
 
     /**
      * Dispatch the request to the application.
+     * 将请求发送到应用程序
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -619,6 +620,7 @@ class Router implements BindingRegistrar, RegistrarContract
 
     /**
      * Dispatch the request to a route and return the response.
+     * 传递当前请求到路由并返回
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
@@ -630,6 +632,7 @@ class Router implements BindingRegistrar, RegistrarContract
 
     /**
      * Find the route matching a given request.
+     * 根据请求匹配当前路由并返回
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Routing\Route
@@ -645,6 +648,7 @@ class Router implements BindingRegistrar, RegistrarContract
 
     /**
      * Return the response for the given route.
+     * 根据找到的路由返回执行结果
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Routing\Route  $route
@@ -665,6 +669,7 @@ class Router implements BindingRegistrar, RegistrarContract
 
     /**
      * Run the given route within a Stack "onion" instance.
+     * 路由中间件过滤
      *
      * @param  \Illuminate\Routing\Route  $route
      * @param  \Illuminate\Http\Request  $request
@@ -676,10 +681,10 @@ class Router implements BindingRegistrar, RegistrarContract
                                 $this->container->make('middleware.disable') === true;
 
         $middleware = $shouldSkipMiddleware ? [] : $this->gatherRouteMiddleware($route);
-
+        //通过管道，发送$request,经过$middleware，再到then中的回调
         return (new Pipeline($this->container))
-                        ->send($request)
-                        ->through($middleware)
+                        ->send($request)//发送请求
+                        ->through($middleware)//实现过滤
                         ->then(function ($request) use ($route) {
                             return $this->prepareResponse(
                                 $request, $route->run()
@@ -689,6 +694,7 @@ class Router implements BindingRegistrar, RegistrarContract
 
     /**
      * Gather the middleware for the given route with resolved class names.
+     * 獲取給定路由的中間件
      *
      * @param  \Illuminate\Routing\Route  $route
      * @return array

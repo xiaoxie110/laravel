@@ -52,7 +52,7 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 // 得到 App\Http\Kernel 实例对象
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
-// 执行对象handle 方法，此方法继承自 Illuminate\Foundation\Http\Kernel
+// 执行对象handle 方法，此方法来自 Illuminate\Foundation\Http\Kernel
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );
