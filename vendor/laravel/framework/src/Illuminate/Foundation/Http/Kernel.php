@@ -97,6 +97,7 @@ class Kernel implements KernelContract
 
     /**
      * Handle an incoming HTTP request.
+     * 處理HTTP請求
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -122,6 +123,7 @@ class Kernel implements KernelContract
 
     /**
      * Send the given request through the middleware / router.
+     * 处理HTTP请求，在中间件 路由方法等
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -182,6 +184,7 @@ class Kernel implements KernelContract
 
     /**
      * Call the terminate method on any terminable middleware.
+     * 終止中間件
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Http\Response  $response

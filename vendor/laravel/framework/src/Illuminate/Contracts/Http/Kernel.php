@@ -6,6 +6,7 @@ interface Kernel
 {
     /**
      * Bootstrap the application for HTTP requests.
+     * 加載基本配置
      *
      * @return void
      */
@@ -13,6 +14,7 @@ interface Kernel
 
     /**
      * Handle an incoming HTTP request.
+     * 處理HTTP請求
      *
      * @param  \Symfony\Component\HttpFoundation\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response

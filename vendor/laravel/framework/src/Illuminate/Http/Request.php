@@ -19,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
  */
 class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 {
+    //继承Symfony\Component\HttpFoundation\Request
     use Concerns\InteractsWithContentTypes,
         Concerns\InteractsWithFlashData,
         Concerns\InteractsWithInput,
@@ -54,6 +55,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Create a new Illuminate HTTP request from server variables.
+     * 請求對象初始化，返回request實例
      *
      * @return static
      */
@@ -66,6 +68,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Return the Request instance.
+     * 返回requst实例
      *
      * @return $this
      */
@@ -76,6 +79,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get the request method.
+     * 获取请求方法
      *
      * @return string
      */
@@ -86,6 +90,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get the root URL for the application.
+     * 获取站点网址
      *
      * @return string
      */
@@ -96,6 +101,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get the URL (no query string) for the request.
+     * 获取请求url（包含域名，不包含请求参数）
      *
      * @return string
      */
@@ -106,6 +112,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get the full URL for the request.
+     * 获取请求url（包含域名，包含请求参数）
      *
      * @return string
      */
@@ -135,6 +142,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Get the current path info for the request.
+     * 返回当前请求路径（不包含域名）
      *
      * @return string
      */
@@ -447,6 +455,7 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
 
     /**
      * Filter the given array of files, removing any empty values.
+     * 过滤上传文件
      *
      * @param  mixed  $files
      * @return mixed
